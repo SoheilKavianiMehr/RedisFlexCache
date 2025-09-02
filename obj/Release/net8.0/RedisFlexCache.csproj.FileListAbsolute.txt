@@ -12,3 +12,4 @@ D:\Project\Visual Studio\00-My Nuget Packages\RedisFlexCache\RedisFlexCache\obj\
 D:\Project\Visual Studio\00-My Nuget Packages\RedisFlexCache\RedisFlexCache\obj\Release\net8.0\RedisFlexCache.xml
 D:\Project\Visual Studio\00-My Nuget Packages\RedisFlexCache\RedisFlexCache\obj\Release\net8.0\RedisFlexCache.pdb
 D:\Project\Visual Studio\00-My Nuget Packages\RedisFlexCache\RedisFlexCache\obj\Release\net8.0\ref\RedisFlexCache.dll
+D:\Project\Visual Studio\00-My Nuget Packages\RedisFlexCache\RedisFlexCache\obj\Release\net8.0\RedisFlexCache.sourcelink.json

@@ -4,16 +4,16 @@
     <id>RedisFlexCache</id>
     <version>1.0.0</version>
     <title>Redis Flexible Cache</title>
-    <authors>Your Name</authors>
+    <authors>Soheil Kaviani Mehr</authors>
     <license type="expression">MIT</license>
     <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
     <readme>README.md</readme>
-    <projectUrl>https://github.com/yourusername/RedisFlexCache</projectUrl>
+    <projectUrl>https://github.com/SoheilKavianiMehr/RedisFlexCache</projectUrl>
     <description>A flexible and easy-to-use Redis caching library for .NET applications with support for dependency injection, configuration patterns, and advanced caching strategies.</description>
     <releaseNotes>Initial release with core Redis caching functionality, dependency injection support, and configuration patterns.</releaseNotes>
-    <copyright>Copyright © 2024</copyright>
+    <copyright>Copyright © 2025</copyright>
     <tags>redis cache caching distributed-cache dotnet performance</tags>
-    <repository type="git" url="https://github.com/yourusername/RedisFlexCache" />
+    <repository type="git" url="https://github.com/SoheilKavianiMehr/RedisFlexCache" commit="0df0d9a5d8fe5866facbd81759982f7ec104ee40" />
     <dependencies>
       <group targetFramework="net8.0">
         <dependency id="MessagePack" version="3.1.4" exclude="Build,Analyzers" />
