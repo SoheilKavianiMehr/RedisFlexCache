@@ -1,0 +1,555 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RedisFlexCache</name>
+    </assembly>
+    <members>
+        <member name="T:RedisFlexCache.Configuration.RedisCacheOptions">
+            <summary>
+            Configuration options for Redis cache implementation.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Configuration.RedisCacheOptions.Connection">
+            <summary>
+            Gets or sets the Redis connection string.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Configuration.RedisCacheOptions.DefaultExpiration">
+            <summary>
+            Gets or sets the default expiration time for cached items.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Configuration.RedisCacheOptions.KeyPrefix">
+            <summary>
+            Gets or sets the optional key prefix for all cache keys.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Configuration.RedisCacheOptions.EnableCompression">
+            <summary>
+            Gets or sets a value indicating whether compression is enabled for cached values.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Configuration.RedisCacheOptions.ConnectionTimeout">
+            <summary>
+            Gets or sets the connection timeout for Redis operations.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Configuration.RedisCacheOptions.CommandTimeout">
+            <summary>
+            Gets or sets the synchronous operation timeout.
+            </summary>
+        </member>
+        <member name="M:RedisFlexCache.Configuration.RedisCacheOptions.Validate">
+            <summary>
+            Validates the configuration options and throws exceptions for invalid settings.
+            </summary>
+            <exception cref="T:System.ArgumentException">Thrown when configuration values are invalid.</exception>
+        </member>
+        <member name="T:RedisFlexCache.Extensions.ServiceCollectionExtensions">
+            <summary>
+            Extension methods for <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> to register Redis cache services.
+            </summary>
+        </member>
+        <member name="M:RedisFlexCache.Extensions.ServiceCollectionExtensions.AddRedisFlexCache(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String)">
+            <summary>
+            Adds Redis cache services to the dependency injection container with a connection string.
+            </summary>
+            <param name="services">The service collection.</param>
+            <param name="connectionString">The Redis connection string.</param>
+            <returns>The service collection for chaining.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Extensions.ServiceCollectionExtensions.AddRedisFlexCache(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{RedisFlexCache.Configuration.RedisCacheOptions})">
+            <summary>
+            Adds Redis cache services to the dependency injection container with configuration options.
+            </summary>
+            <param name="services">The service collection.</param>
+            <param name="configureOptions">An action to configure the Redis cache options.</param>
+            <returns>The service collection for chaining.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Extensions.ServiceCollectionExtensions.AddRedisFlexCache(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,System.String)">
+            <summary>
+            Adds Redis cache services to the dependency injection container using configuration.
+            </summary>
+            <param name="services">The service collection.</param>
+            <param name="configuration">The configuration instance.</param>
+            <param name="sectionName">The configuration section name (default: "RedisCache").</param>
+            <returns>The service collection for chaining.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Extensions.ServiceCollectionExtensions.AddRedisFlexCache``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{RedisFlexCache.Configuration.RedisCacheOptions})">
+            <summary>
+            Adds a custom Redis cache service implementation to the dependency injection container.
+            </summary>
+            <typeparam name="TImplementation">The custom cache service implementation type.</typeparam>
+            <param name="services">The service collection.</param>
+            <param name="configureOptions">An action to configure the Redis cache options.</param>
+            <returns>The service collection for chaining.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Extensions.ServiceCollectionExtensions.AddRedisFlexCacheWithValidation(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{RedisFlexCache.Configuration.RedisCacheOptions},System.Boolean)">
+            <summary>
+            Adds Redis cache services with options validation to the dependency injection container.
+            </summary>
+            <param name="services">The service collection.</param>
+            <param name="configureOptions">An action to configure the Redis cache options.</param>
+            <param name="validateOnStart">Whether to validate the configuration on application start.</param>
+            <returns>The service collection for chaining.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Extensions.ServiceCollectionExtensions.AddRedisFlexCacheScoped(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{RedisFlexCache.Configuration.RedisCacheOptions})">
+            <summary>
+            Adds Redis cache services with scoped lifetime to the dependency injection container.
+            </summary>
+            <param name="services">The service collection.</param>
+            <param name="configureOptions">An action to configure the Redis cache options.</param>
+            <returns>The service collection for chaining.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Extensions.ServiceCollectionExtensions.AddRedisFlexCacheTransient(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{RedisFlexCache.Configuration.RedisCacheOptions})">
+            <summary>
+            Adds Redis cache services with transient lifetime to the dependency injection container.
+            </summary>
+            <param name="services">The service collection.</param>
+            <param name="configureOptions">An action to configure the Redis cache options.</param>
+            <returns>The service collection for chaining.</returns>
+        </member>
+        <member name="T:RedisFlexCache.Interfaces.ICacheConfiguration">
+            <summary>
+            Defines the configuration contract for Redis cache settings.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Interfaces.ICacheConfiguration.Connection">
+            <summary>
+            Gets the Redis connection string.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Interfaces.ICacheConfiguration.DefaultExpiration">
+            <summary>
+            Gets the default expiration time for cached items.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Interfaces.ICacheConfiguration.KeyPrefix">
+            <summary>
+            Gets the optional key prefix for all cache keys.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Interfaces.ICacheConfiguration.EnableCompression">
+            <summary>
+            Gets a value indicating whether compression is enabled for cached values.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Interfaces.ICacheConfiguration.ConnectionTimeout">
+            <summary>
+            Gets the connection timeout for Redis operations.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Interfaces.ICacheConfiguration.CommandTimeout">
+            <summary>
+            Gets the synchronous operation timeout.
+            </summary>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheProvider.FetchAsync``1(System.String,System.Threading.CancellationToken)">
+            <summary>
+            fetch data from redis based on given key
+            </summary>
+            <typeparam name="T">object type</typeparam>
+            <param name="key">redis key</param>
+            <returns></returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheProvider.Fetch``1(System.String)">
+            <summary>
+            fetch data from redis based on given key
+            </summary>
+            <typeparam name="T">object type</typeparam>
+            <param name="key">redis key</param>
+            <returns></returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheProvider.StoreAsync``1(System.String,``0,System.Nullable{System.TimeSpan},System.Threading.CancellationToken)">
+            <summary>
+            store data on redis
+            </summary>
+            <typeparam name="T">object type</typeparam>
+            <param name="key">redis key</param>
+            <param name="value">value</param>
+            <param name="expiration">expiration</param>
+            <param name="ttl">time to live</param>
+            <returns></returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheProvider.Store``1(System.String,``0,System.Nullable{System.TimeSpan})">
+            <summary>
+            store data on redis
+            </summary>
+            <typeparam name="T">object type</typeparam>
+            <param name="key">redis key</param>
+            <param name="value">value</param>
+            <param name="expiration">expiration</param>
+            <param name="ttl">time to live</param>
+            <returns></returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheProvider.RemoveAsync(System.String,System.Nullable{System.TimeSpan},System.Threading.CancellationToken)">
+            <summary>
+            remove value from redis based on given key
+            </summary>
+            <param name="key">redis key</param>
+            <param name="removeAt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheProvider.Remove(System.String,System.Nullable{System.TimeSpan})">
+            <summary>
+            remove value from redis based on given key
+            </summary>
+            <param name="key">redis key</param>
+            <param name="removeAt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheProvider.ExistsAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously checks if a key exists in the cache.
+            </summary>
+            <param name="key">The cache key to check.</param>
+            <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+            <returns>True if the key exists; otherwise, false.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheProvider.Exists(System.String)">
+            <summary>
+            Synchronously checks if a key exists in the cache.
+            </summary>
+            <param name="key">The cache key to check.</param>
+            <returns>True if the key exists; otherwise, false.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheProvider.GetTimeToLiveAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously gets the remaining time to live for a key.
+            </summary>
+            <param name="key">The cache key.</param>
+            <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+            <returns>The remaining time to live, or null if the key doesn't exist or has no expiration.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheProvider.GetTimeToLive(System.String)">
+            <summary>
+            Synchronously gets the remaining time to live for a key.
+            </summary>
+            <param name="key">The cache key.</param>
+            <returns>The remaining time to live, or null if the key doesn't exist or has no expiration.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheProvider.RefreshAsync(System.String,System.TimeSpan,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously refreshes the expiration time of a key.
+            </summary>
+            <param name="key">The cache key to refresh.</param>
+            <param name="expiration">The new expiration time.</param>
+            <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+            <returns>True if the expiration was updated successfully.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheProvider.Refresh(System.String,System.TimeSpan)">
+            <summary>
+            Synchronously refreshes the expiration time of a key.
+            </summary>
+            <param name="key">The cache key to refresh.</param>
+            <param name="expiration">The new expiration time.</param>
+            <returns>True if the expiration was updated successfully.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheProvider.ScanKeysAsync(System.String,System.String,System.String)">
+            <summary>
+            to search in redis keys
+            </summary>
+            <param name="scan">must be 0</param>
+            <param name="match"> wildcard use for search in keys</param>
+            <param name="count">count to return keys</param>
+            <returns>list of keys</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheProvider.SortedSetLengthAsync(StackExchange.Redis.RedisKey,System.Double,System.Double,StackExchange.Redis.Exclude,StackExchange.Redis.CommandFlags)">
+            <summary>
+            Returns the sorted set cardinality (number of elements) of the sorted set stored at key.
+            </summary>
+            <param name="key">The key of the sorted set.</param>
+            <param name="min">The min score to filter by (defaults to negative infinity).</param>
+            <param name="max">The max score to filter by (defaults to positive infinity).</param>
+            <param name="exclude">Whether to exclude <paramref name="min"/> and <paramref name="max"/> from the range check (defaults to both inclusive).</param>
+            <param name="flags">The flags to use for this operation.</param>
+            <returns>The cardinality (number of elements) of the sorted set, or 0 if key does not exist.</returns>
+            <remarks><seealso href="https://redis.io/commands/zcard"/></remarks>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheProvider.SortedSetAddAsync(StackExchange.Redis.RedisKey,StackExchange.Redis.RedisValue,System.Double,StackExchange.Redis.CommandFlags)">
+            <inheritdoc cref="M:RedisFlexCache.Interfaces.ICacheProvider.SortedSetAddAsync(StackExchange.Redis.RedisKey,StackExchange.Redis.RedisValue,System.Double,StackExchange.Redis.CommandFlags)" />
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheProvider.KeyExpireAsync(StackExchange.Redis.RedisKey,System.Nullable{System.TimeSpan},StackExchange.Redis.CommandFlags)">
+            <summary>
+            Set a timeout on <paramref name="key"/>.
+            After the timeout has expired, the key will automatically be deleted.
+            A key with an associated timeout is said to be volatile in Redis terminology.
+            </summary>
+            <param name="key">The key to set the expiration for.</param>
+            <param name="expiry">The timeout to set.</param>
+            <param name="flags">The flags to use for this operation.</param>
+            <returns><see langword="true"/> if the timeout was set. <see langword="false"/> if key does not exist or the timeout could not be set.</returns>
+            <remarks>
+            If key is updated before the timeout has expired, then the timeout is removed as if the PERSIST command was invoked on key.
+            <para>
+            For Redis versions &lt; 2.1.3, existing timeouts cannot be overwritten.
+            So, if key already has an associated timeout, it will do nothing and return 0.
+            </para>
+            <para>
+            Since Redis 2.1.3, you can update the timeout of a key.
+            It is also possible to remove the timeout using the PERSIST command.
+            See the page on key expiry for more information.
+            </para>
+            <para>
+            <seealso href="https://redis.io/commands/expire"/>,
+            <seealso href="https://redis.io/commands/pexpire"/>,
+            <seealso href="https://redis.io/commands/persist"/>
+            </para>
+            </remarks>
+        </member>
+        <member name="T:RedisFlexCache.Interfaces.ICacheService">
+            <summary>
+            Defines a flexible caching service interface with Redis backend support.
+            Provides both synchronous and asynchronous operations for cache management.
+            </summary>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheService.GetAsync``1(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously retrieves a value from the cache by key.
+            </summary>
+            <typeparam name="T">The type of the cached value.</typeparam>
+            <param name="key">The cache key.</param>
+            <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+            <returns>The cached value if found; otherwise, null.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheService.Get``1(System.String)">
+            <summary>
+            Synchronously retrieves a value from the cache by key.
+            </summary>
+            <typeparam name="T">The type of the cached value.</typeparam>
+            <param name="key">The cache key.</param>
+            <returns>The cached value if found; otherwise, null.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously stores a value in the cache with an optional ttl time.
+            </summary>
+            <typeparam name="T">The type of the value to cache.</typeparam>
+            <param name="key">The cache key.</param>
+            <param name="value">The value to cache.</param>
+            <param name="ttl">Optional ttl time. If null, uses default ttl.</param>
+            <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+            <returns>True if the value was successfully cached; otherwise, false.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheService.Set``1(System.String,``0,System.Nullable{System.TimeSpan})">
+            <summary>
+            Synchronously stores a value in the cache with an optional ttl time.
+            </summary>
+            <typeparam name="T">The type of the value to cache.</typeparam>
+            <param name="key">The cache key.</param>
+            <param name="value">The value to cache.</param>
+            <param name="ttl">Optional ttl time. If null, uses default ttl.</param>
+            <returns>True if the value was successfully cached; otherwise, false.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheService.RemoveAsync(System.String,System.Nullable{System.TimeSpan},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously removes a value from the cache by key.
+            </summary>
+            <param name="key">The cache key to remove.</param>
+            <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+            <returns>True if the key was found and removed; otherwise, false.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheService.Remove(System.String,System.Nullable{System.TimeSpan})">
+            <summary>
+            Synchronously removes a value from the cache by key.
+            </summary>
+            <param name="key">The cache key to remove.</param>
+            <returns>True if the key was found and removed; otherwise, false.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheService.ExistsAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously checks if a key exists in the cache.
+            </summary>
+            <param name="key">The cache key to check.</param>
+            <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+            <returns>True if the key exists; otherwise, false.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheService.Exists(System.String)">
+            <summary>
+            Synchronously checks if a key exists in the cache.
+            </summary>
+            <param name="key">The cache key to check.</param>
+            <returns>True if the key exists; otherwise, false.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheService.GetTimeToLiveAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously gets the remaining time to live for a key.
+            </summary>
+            <param name="key">The cache key.</param>
+            <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+            <returns>The remaining time to live, or null if the key doesn't exist or has no ttl.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheService.GetTimeToLive(System.String)">
+            <summary>
+            Synchronously gets the remaining time to live for a key.
+            </summary>
+            <param name="key">The cache key.</param>
+            <returns>The remaining time to live, or null if the key doesn't exist or has no ttl.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheService.RefreshAsync(System.String,System.TimeSpan,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously refreshes the ttl time of a key.
+            </summary>
+            <param name="key">The cache key to refresh.</param>
+            <param name="ttl">The new ttl time.</param>
+            <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+            <returns>True if the ttl was updated successfully.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Interfaces.ICacheService.Refresh(System.String,System.TimeSpan)">
+            <summary>
+            Synchronously refreshes the ttl time of a key.
+            </summary>
+            <param name="key">The cache key to refresh.</param>
+            <param name="ttl">The new ttl time.</param>
+            <returns>True if the ttl was updated successfully.</returns>
+        </member>
+        <member name="T:RedisFlexCache.Models.CacheResult`1">
+            <summary>
+            Represents the result of a cache operation.
+            </summary>
+            <typeparam name="T">The type of the cached value.</typeparam>
+        </member>
+        <member name="M:RedisFlexCache.Models.CacheResult`1.#ctor(`0,System.Boolean,System.Nullable{System.DateTime})">
+            <summary>
+            Initializes a new instance of the <see cref="T:RedisFlexCache.Models.CacheResult`1"/> class.
+            </summary>
+            <param name="value">The cached value.</param>
+            <param name="hasValue">Indicates whether the cache contained a value.</param>
+            <param name="expiration">The expiration time of the cached value.</param>
+        </member>
+        <member name="P:RedisFlexCache.Models.CacheResult`1.Value">
+            <summary>
+            Gets or sets the cached value.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Models.CacheResult`1.HasValue">
+            <summary>
+            Gets or sets a value indicating whether the cache contains a value for the key.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Models.CacheResult`1.Expiration">
+            <summary>
+            Gets the expiration time of the cached value.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Models.CacheResult`1.IsExpired">
+            <summary>
+            Gets a value indicating whether the cached value has expired.
+            </summary>
+        </member>
+        <member name="M:RedisFlexCache.Models.CacheResult`1.Miss">
+            <summary>
+            Creates a cache result indicating that no value was found.
+            </summary>
+            <returns>A cache result with no value.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Models.CacheResult`1.Hit(`0,System.Nullable{System.DateTime})">
+            <summary>
+            Creates a cache result with the specified value.
+            </summary>
+            <param name="value">The cached value.</param>
+            <param name="expiration">The expiration time of the cached value.</param>
+            <returns>A cache result with the specified value.</returns>
+        </member>
+        <member name="T:RedisFlexCache.Models.CacheStatistics">
+            <summary>
+            Represents cache statistics and metrics.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Models.CacheStatistics.Hits">
+            <summary>
+            Gets or sets the total number of cache hits.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Models.CacheStatistics.Misses">
+            <summary>
+            Gets or sets the total number of cache misses.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Models.CacheStatistics.TotalOperations">
+            <summary>
+            Gets or sets the total number of cache operations.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Models.CacheStatistics.HitRatio">
+            <summary>
+            Gets the cache hit ratio as a percentage (0.0 to 1.0).
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Models.CacheStatistics.Errors">
+            <summary>
+            Gets or sets the total number of cache operation errors.
+            </summary>
+        </member>
+        <member name="P:RedisFlexCache.Models.CacheStatistics.LastReset">
+            <summary>
+            Gets or sets the timestamp when statistics were last reset.
+            </summary>
+        </member>
+        <member name="M:RedisFlexCache.Provider.RedisCacheProvider.ScanKeysAsync(System.String,System.String,System.String)">
+            <summary>
+            to search in redis keys
+            </summary>
+            <param name="scan">must be 0</param>
+            <param name="match"> wildcard use for search in keys</param>
+            <param name="count">count to return keys</param>
+            <returns>list of keys</returns>
+        </member>
+        <member name="M:RedisFlexCache.Provider.RedisCacheProvider.BuildKey(System.String)">
+            <summary>
+            Builds the Redis key with optional prefix.
+            </summary>
+            <param name="key">The original key.</param>
+            <returns>The Redis key with prefix if configured.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Provider.RedisCacheProvider.SerializeValue``1(``0)">
+            <summary>
+            Serializes a value for storage in Redis.
+            </summary>
+            <typeparam name="T">The type of the value.</typeparam>
+            <param name="value">The value to serialize.</param>
+            <returns>The serialized value.</returns>
+        </member>
+        <member name="M:RedisFlexCache.Provider.RedisCacheProvider.DeserializeValue``1(System.Byte[])">
+            <summary>
+            Deserializes a value from Redis storage.
+            </summary>
+            <typeparam name="T">The type of the value.</typeparam>
+            <param name="value">The serialized value.</param>
+            <returns>The deserialized value.</returns>
+        </member>
+        <member name="T:RedisFlexCache.Services.RedisCacheService">
+            <summary>
+            Redis implementation of the <see cref="T:RedisFlexCache.Interfaces.ICacheService"/> interface.
+            Provides comprehensive caching functionality with Redis backend support.
+            </summary>
+        </member>
+        <member name="M:RedisFlexCache.Services.RedisCacheService.Get``1(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RedisFlexCache.Services.RedisCacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan},System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RedisFlexCache.Services.RedisCacheService.Set``1(System.String,``0,System.Nullable{System.TimeSpan})">
+            <inheritdoc/>
+        </member>
+        <member name="M:RedisFlexCache.Services.RedisCacheService.ExistsAsync(System.String,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RedisFlexCache.Services.RedisCacheService.Exists(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RedisFlexCache.Services.RedisCacheService.GetTimeToLiveAsync(System.String,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RedisFlexCache.Services.RedisCacheService.GetTimeToLive(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RedisFlexCache.Services.RedisCacheService.RefreshAsync(System.String,System.TimeSpan,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RedisFlexCache.Services.RedisCacheService.Refresh(System.String,System.TimeSpan)">
+            <inheritdoc/>
+        </member>
+    </members>
+</doc>

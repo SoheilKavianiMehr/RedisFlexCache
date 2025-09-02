@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    
+    <!-- NuGet Package Metadata -->
+    <PackageId>RedisFlexCache</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Title>Redis Flexible Cache</Title>
+    <Authors>Soheil Kaviani Mehr</Authors>
+    <Company>SoheilKm</Company>
+    <Description>A flexible and easy-to-use Redis caching library for .NET applications with support for dependency injection, configuration patterns, and advanced caching strategies.</Description>
+    <PackageTags>redis;cache;caching;distributed-cache;dotnet;performance</PackageTags>
+    <PackageProjectUrl>https://github.com/SoheilKavianiMehr/RedisFlexCache</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SoheilKavianiMehr/RedisFlexCache</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>Initial release with core Redis caching functionality, dependency injection support, and configuration patterns.</PackageReleaseNotes>
+    <Copyright>Copyright © 2025</Copyright>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MessagePack" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.8" />
+    <PackageReference Include="StackExchange.Redis" Version="2.7.20" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+
+    <None Include="LICENSE" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
