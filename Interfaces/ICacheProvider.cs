@@ -1,8 +1,12 @@
-﻿using StackExchange.Redis;
+using StackExchange.Redis;
 using System.ComponentModel;
 
 namespace RedisFlexCache.Interfaces;
 
+/// <summary>
+/// Defines the contract for Redis cache provider operations.
+/// Provides low-level Redis operations for caching functionality.
+/// </summary>
 public interface ICacheProvider
 {
     /// <summary>
@@ -10,6 +14,7 @@ public interface ICacheProvider
     /// </summary>
     /// <typeparam name="T">object type</typeparam>
     /// <param name="key">redis key</param>
+    /// <param name="cancellationToken">cancellation token</param>
     /// <returns></returns>
     Task<T?> FetchAsync<T>(string key, CancellationToken cancellationToken = default);
 
@@ -27,8 +32,8 @@ public interface ICacheProvider
     /// <typeparam name="T">object type</typeparam>
     /// <param name="key">redis key</param>
     /// <param name="value">value</param>
-    /// <param name="expiration">expiration</param>
     /// <param name="ttl">time to live</param>
+    /// <param name="cancellationToken">cancellation token</param>
     /// <returns></returns>
     Task StoreAsync<T>(string key, T value, TimeSpan? ttl = null, CancellationToken cancellationToken = default);
 
@@ -38,7 +43,6 @@ public interface ICacheProvider
     /// <typeparam name="T">object type</typeparam>
     /// <param name="key">redis key</param>
     /// <param name="value">value</param>
-    /// <param name="expiration">expiration</param>
     /// <param name="ttl">time to live</param>
     /// <returns></returns>
     void Store<T>(string key, T value, TimeSpan? ttl = null);
@@ -49,7 +53,8 @@ public interface ICacheProvider
     /// remove value from redis based on given key
     /// </summary>
     /// <param name="key">redis key</param>
-    /// <param name="removeAt"></param>
+    /// <param name="removeAt">optional delay before removal</param>
+    /// <param name="cancellationToken">cancellation token</param>
     /// <returns></returns>
     Task RemoveAsync(string key, TimeSpan? removeAt = null, CancellationToken cancellationToken = default);
 

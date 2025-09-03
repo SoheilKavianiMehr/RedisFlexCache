@@ -166,6 +166,11 @@ namespace RedisFlexCache.Extensions
             return services;
         }
 
+        /// <summary>
+        /// Adds the local Redis cache dependencies to the service collection.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <returns>The service collection for chaining.</returns>
         private static IServiceCollection AddLocal(this IServiceCollection services)
         {
             services.AddSingleton<IDatabaseProvider, RedisDatabaseProvider>();

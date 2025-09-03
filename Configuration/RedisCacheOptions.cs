@@ -23,6 +23,9 @@ namespace RedisFlexCache.Configuration
         /// </summary>
         public string? KeyPrefix { get; set; }
 
+        /// <summary>
+        /// Gets or sets the number of connections to maintain in the connection pool.
+        /// </summary>
         public int ConnectionCount { get; set; } = 1;
 
         /// <summary>
@@ -40,13 +43,29 @@ namespace RedisFlexCache.Configuration
         /// </summary>
         public int CommandTimeout { get; set; } = 5000;
 
+        /// <summary>
+        /// Gets or sets the username for Redis authentication.
+        /// </summary>
         public string Username { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the password for Redis authentication.
+        /// </summary>
         public string Password { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether database caching is active.
+        /// </summary>
         public bool IsDbCachedActive { get; set; } = false;
 
+        /// <summary>
+        /// Gets or sets the maximum allowed length for cache keys.
+        /// </summary>
         public int MaxKeyLength { get; set; } = 100;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether to hash cache keys using SHA256.
+        /// </summary>
         public bool EnableHashKey { get; set; } = false;
 
         /// <summary>

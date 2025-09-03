@@ -1,4 +1,4 @@
-﻿using MessagePack;
+using MessagePack;
 using MessagePack.Resolvers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -8,6 +8,10 @@ using StackExchange.Redis;
 
 namespace RedisFlexCache.Provider
 {
+    /// <summary>
+    /// Provides Redis cache operations implementation.
+    /// Handles serialization, compression, and Redis database interactions.
+    /// </summary>
     public class RedisCacheProvider : ICacheProvider
     {
         private readonly RedisCacheOptions _options;
@@ -18,6 +22,13 @@ namespace RedisFlexCache.Provider
         private readonly MessagePackSerializerOptions _messagePackOptions;
 
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RedisCacheProvider"/> class.
+        /// </summary>
+        /// <param name="options">The Redis cache configuration options.</param>
+        /// <param name="logger">The logger instance.</param>
+        /// <param name="readDatabase">The Redis database for read operations.</param>
+        /// <param name="writeDatabase">The Redis database for write operations.</param>
         public RedisCacheProvider(IOptions<RedisCacheOptions> options, ILogger<RedisCacheProvider> logger, IDatabase readDatabase, IDatabase writeDatabase)
         {
             _options = options.Value ?? throw new ArgumentNullException(nameof(options));
@@ -40,6 +51,7 @@ namespace RedisFlexCache.Provider
             }
         }
 
+        /// <inheritdoc/>
         public async Task StoreAsync<T>(string key, T value, TimeSpan? ttl = null, CancellationToken cancellationToken = default)
         {
             try
@@ -57,11 +69,13 @@ namespace RedisFlexCache.Provider
             }
         }
 
+        /// <inheritdoc/>
         public void Store<T>(string key, T value, TimeSpan? ttl = null)
         {
             StoreAsync(key, value, ttl).GetAwaiter().GetResult();
         }
 
+        /// <inheritdoc/>
         public async Task<T?> FetchAsync<T>(string key, CancellationToken cancellationToken = default)
         {
             try
@@ -85,11 +99,13 @@ namespace RedisFlexCache.Provider
 
         }
 
+        /// <inheritdoc/>
         public T? Fetch<T>(string key)
         {
             return FetchAsync<T>(key).GetAwaiter().GetResult();
         }
 
+        /// <inheritdoc/>
         public async Task RemoveAsync(string key, TimeSpan? removeAt = null, CancellationToken cancellationToken = default)
         {
             try
@@ -112,11 +128,13 @@ namespace RedisFlexCache.Provider
             }
         }
 
+        /// <inheritdoc/>
         public void Remove(string key, TimeSpan? removeAt = null)
         {
             RemoveAsync(key).GetAwaiter().GetResult();
         }
 
+        /// <inheritdoc/>
         public async Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default)
         {
             try
@@ -131,18 +149,13 @@ namespace RedisFlexCache.Provider
             }
         }
 
+        /// <inheritdoc/>
         public bool Exists(string key)
         {
             return ExistsAsync(key).GetAwaiter().GetResult();
         }
 
-        /// <summary>
-        /// to search in redis keys
-        /// </summary>
-        /// <param name="scan">must be 0</param>
-        /// <param name="match"> wildcard use for search in keys</param>
-        /// <param name="count">count to return keys</param>
-        /// <returns>list of keys</returns>
+        /// <inheritdoc/>
         public async Task<List<string>> ScanKeysAsync(string scan, string match, string count)
         {
             var schemas = new List<string>();
@@ -162,6 +175,7 @@ namespace RedisFlexCache.Provider
             return schemas;
         }
 
+        /// <inheritdoc/>
         public async Task<long> SortedSetLengthAsync(RedisKey key, double min = double.NegativeInfinity,
             double max = double.PositiveInfinity, Exclude exclude = Exclude.None, CommandFlags flags = CommandFlags.None)
         {
@@ -176,6 +190,7 @@ namespace RedisFlexCache.Provider
             }
         }
 
+        /// <inheritdoc/>
         public async Task<bool> SortedSetAddAsync(RedisKey key, RedisValue member, double score, CommandFlags flags = CommandFlags.FireAndForget)
         {
             try
@@ -189,6 +204,7 @@ namespace RedisFlexCache.Provider
             }
         }
 
+        /// <inheritdoc/>
         public async Task<bool> KeyExpireAsync(RedisKey key, TimeSpan? expiry, CommandFlags flags = CommandFlags.FireAndForget)
         {
             try
@@ -202,6 +218,7 @@ namespace RedisFlexCache.Provider
             }
         }
 
+        /// <inheritdoc/>
         public async Task<TimeSpan?> GetTimeToLiveAsync(string key, CancellationToken cancellationToken = default)
         {
             try
@@ -216,6 +233,7 @@ namespace RedisFlexCache.Provider
             }
         }
 
+        /// <inheritdoc/>
         public TimeSpan? GetTimeToLive(string key)
         {
             try
@@ -230,6 +248,7 @@ namespace RedisFlexCache.Provider
             }
         }
 
+        /// <inheritdoc/>
         public async Task<bool> RefreshAsync(string key, TimeSpan expiration, CancellationToken cancellationToken = default)
         {
             try
@@ -244,6 +263,7 @@ namespace RedisFlexCache.Provider
             }
         }
 
+        /// <inheritdoc/>
         public bool Refresh(string key, TimeSpan expiration)
         {
             try

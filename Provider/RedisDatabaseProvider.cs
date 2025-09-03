@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RedisFlexCache.Configuration;
 using RedisFlexCache.Interfaces;
@@ -7,6 +7,10 @@ using StackExchange.Redis;
 
 namespace RedisFlexCache.Provider;
 
+/// <summary>
+/// Provides Redis database instances with connection pooling support.
+/// Manages multiple Redis connections for load balancing and high availability.
+/// </summary>
 public class RedisDatabaseProvider : IDatabaseProvider
 {
     private readonly List<ConnectionMultiplexer> _connectionPool;
@@ -14,6 +18,11 @@ public class RedisDatabaseProvider : IDatabaseProvider
     private readonly ILogger<RedisCacheService> _logger;
     private readonly Random _random;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RedisDatabaseProvider"/> class.
+    /// </summary>
+    /// <param name="options">The Redis cache configuration options.</param>
+    /// <param name="logger">The logger instance.</param>
     public RedisDatabaseProvider(IOptions<RedisCacheOptions> options, ILogger<RedisCacheService> logger)
     {
         _options = options.Value ?? throw new ArgumentNullException(nameof(options));
@@ -70,6 +79,7 @@ public class RedisDatabaseProvider : IDatabaseProvider
 
     }
 
+    /// <inheritdoc/>
     public IDatabase GetDatabase()
     {
         ConnectionMultiplexer multiplexer = _connectionPool[_random.Next(0, _options.ConnectionCount - 1)];

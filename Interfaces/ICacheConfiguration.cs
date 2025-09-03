@@ -22,12 +22,18 @@ namespace RedisFlexCache.Interfaces
         /// </summary>
         string? KeyPrefix { get; }
 
+        /// <summary>
+        /// Gets the number of connections to maintain in the connection pool.
+        /// </summary>
         int ConnectionCount { get; }
 
         /// <summary>
         /// Gets a value indicating whether compression is enabled for cached values.
         /// </summary>
         bool EnableCompression { get; }
+        /// <summary>
+        /// Gets a value indicating whether to hash cache keys using SHA256.
+        /// </summary>
         bool EnableHashKey { get; }
 
         /// <summary>
@@ -39,10 +45,24 @@ namespace RedisFlexCache.Interfaces
         /// Gets the synchronous operation timeout.
         /// </summary>
         int CommandTimeout { get; }
+        /// <summary>
+        /// Gets the maximum allowed length for cache keys.
+        /// </summary>
         int MaxKeyLength { get; }
 
+        /// <summary>
+        /// Gets the username for Redis authentication.
+        /// </summary>
         string Username { get; }
+        
+        /// <summary>
+        /// Gets the password for Redis authentication.
+        /// </summary>
         string Password { get; }
+        
+        /// <summary>
+        /// Gets a value indicating whether database caching is active.
+        /// </summary>
         bool IsDbCachedActive { get; }
     }
 }
