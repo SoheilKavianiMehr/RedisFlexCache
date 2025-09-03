@@ -175,8 +175,13 @@ namespace RedisFlexCache.Extensions
         {
             services.AddSingleton<IDatabaseProvider, RedisDatabaseProvider>();
             services.AddScoped<ICacheProvider, RedisCacheProvider>();
-            services.AddTransient(provider => provider.GetService<IDatabaseProvider>()?.GetDatabase());
-
+            
+            // Register IDatabase factory that provides separate read/write databases
+            services.AddTransient<IDatabase>(provider => 
+            {
+                var databaseProvider = provider.GetRequiredService<IDatabaseProvider>();
+                return databaseProvider.GetDatabase();
+            });
 
             return services;
         }

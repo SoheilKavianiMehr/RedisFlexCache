@@ -4,6 +4,7 @@ using RedisFlexCache.Configuration;
 using RedisFlexCache.Interfaces;
 using RedisFlexCache.Services;
 using StackExchange.Redis;
+using System.Linq;
 
 namespace RedisFlexCache.Provider;
 
@@ -82,7 +83,25 @@ public class RedisDatabaseProvider : IDatabaseProvider
     /// <inheritdoc/>
     public IDatabase GetDatabase()
     {
-        ConnectionMultiplexer multiplexer = _connectionPool[_random.Next(0, _options.ConnectionCount - 1)];
+        if (_connectionPool.Count == 0)
+            throw new InvalidOperationException("No Redis connections available in the pool.");
+            
+        // Use modulo to ensure we don't go out of bounds
+        var index = _random.Next(0, _connectionPool.Count);
+        var multiplexer = _connectionPool[index];
+        
+        if (!multiplexer.IsConnected)
+        {
+            _logger.LogWarning("Selected Redis connection is not connected, attempting to reconnect...");
+            // Try to find a connected multiplexer
+            var connectedMultiplexer = _connectionPool.FirstOrDefault(c => c.IsConnected);
+            if (connectedMultiplexer != null)
+            {
+                return connectedMultiplexer.GetDatabase();
+            }
+            _logger.LogError("No connected Redis instances available in the pool.");
+        }
+        
         return multiplexer.GetDatabase();
     }
 }

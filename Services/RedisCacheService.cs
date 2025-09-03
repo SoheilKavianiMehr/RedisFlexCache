@@ -72,9 +72,12 @@ namespace RedisFlexCache.Services
             return await getObjectFromStorageFunc();
         }
         /// <inheritdoc/>
-        public Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default)
+        public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default)
         {
-            return _cacheProvider.FetchAsync<T>(Hash(key));
+            if (string.IsNullOrWhiteSpace(key))
+                throw new ArgumentException("Key cannot be null or whitespace.", nameof(key));
+                
+            return await _cacheProvider.FetchAsync<T>(Hash(key)).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -84,9 +87,12 @@ namespace RedisFlexCache.Services
         }
 
         /// <inheritdoc/>
-        public Task SetAsync<T>(string key, T value, TimeSpan? ttl = null, CancellationToken cancellationToken = default)
+        public async Task SetAsync<T>(string key, T value, TimeSpan? ttl = null, CancellationToken cancellationToken = default)
         {
-            return _cacheProvider.StoreAsync(Hash(key), value, ttl, cancellationToken);
+            if (string.IsNullOrWhiteSpace(key))
+                throw new ArgumentException("Key cannot be null or whitespace.", nameof(key));
+                
+            await _cacheProvider.StoreAsync(Hash(key), value, ttl, cancellationToken).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -96,9 +102,12 @@ namespace RedisFlexCache.Services
         }
 
         /// <inheritdoc/>
-        public Task RemoveAsync(string key, TimeSpan? ttl = null, CancellationToken cancellationToken = default)
+        public async Task RemoveAsync(string key, TimeSpan? ttl = null, CancellationToken cancellationToken = default)
         {
-            return _cacheProvider.RemoveAsync(Hash(key), ttl, cancellationToken);
+            if (string.IsNullOrWhiteSpace(key))
+                throw new ArgumentException("Key cannot be null or whitespace.", nameof(key));
+                
+            await _cacheProvider.RemoveAsync(Hash(key), ttl, cancellationToken).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -108,9 +117,12 @@ namespace RedisFlexCache.Services
         }
 
         /// <inheritdoc/>
-        public Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default)
+        public async Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default)
         {
-            return _cacheProvider.ExistsAsync(Hash(key), cancellationToken);
+            if (string.IsNullOrWhiteSpace(key))
+                throw new ArgumentException("Key cannot be null or whitespace.", nameof(key));
+                
+            return await _cacheProvider.ExistsAsync(Hash(key), cancellationToken).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -120,9 +132,12 @@ namespace RedisFlexCache.Services
         }
 
         /// <inheritdoc/>
-        public Task<TimeSpan?> GetTimeToLiveAsync(string key, CancellationToken cancellationToken = default)
+        public async Task<TimeSpan?> GetTimeToLiveAsync(string key, CancellationToken cancellationToken = default)
         {
-            return _cacheProvider.GetTimeToLiveAsync(Hash(key), cancellationToken);
+            if (string.IsNullOrWhiteSpace(key))
+                throw new ArgumentException("Key cannot be null or whitespace.", nameof(key));
+                
+            return await _cacheProvider.GetTimeToLiveAsync(Hash(key), cancellationToken).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -132,9 +147,12 @@ namespace RedisFlexCache.Services
         }
 
         /// <inheritdoc/>
-        public Task<bool> RefreshAsync(string key, TimeSpan ttl, CancellationToken cancellationToken = default)
+        public async Task<bool> RefreshAsync(string key, TimeSpan ttl, CancellationToken cancellationToken = default)
         {
-            return _cacheProvider.RefreshAsync(Hash(key), ttl, cancellationToken);
+            if (string.IsNullOrWhiteSpace(key))
+                throw new ArgumentException("Key cannot be null or whitespace.", nameof(key));
+                
+            return await _cacheProvider.RefreshAsync(Hash(key), ttl, cancellationToken).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

@@ -25,17 +25,19 @@ namespace RedisFlexCache.Provider
         /// <summary>
         /// Initializes a new instance of the <see cref="RedisCacheProvider"/> class.
         /// </summary>
-        /// <param name="options">The Redis cache configuration options.</param>
+        /// <param name="options">The Redis cache options.</param>
         /// <param name="logger">The logger instance.</param>
-        /// <param name="readDatabase">The Redis database for read operations.</param>
-        /// <param name="writeDatabase">The Redis database for write operations.</param>
-        public RedisCacheProvider(IOptions<RedisCacheOptions> options, ILogger<RedisCacheProvider> logger, IDatabase readDatabase, IDatabase writeDatabase)
+        /// <param name="databaseProvider">The database provider for Redis operations.</param>
+        public RedisCacheProvider(IOptions<RedisCacheOptions> options, ILogger<RedisCacheProvider> logger, IDatabaseProvider databaseProvider)
         {
             _options = options.Value ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _logger = logger;
-            _readDatabase = readDatabase;
-            _writeDatabase = writeDatabase;
+            var provider = databaseProvider ?? throw new ArgumentNullException(nameof(databaseProvider));
+            
+            // Use the same database instance for both read and write operations
+            // In a real-world scenario, you might want separate read/write databases
+            _readDatabase = provider.GetDatabase();
+            _writeDatabase = provider.GetDatabase();
 
             var resolver = CompositeResolver.Create(
                 StandardResolver.Instance,
@@ -60,7 +62,7 @@ namespace RedisFlexCache.Provider
                 var serializedValue = SerializeValue(value);
                 var exp = PrepareTtl(ttl);
 
-                await _writeDatabase.StringSetAsync(key, serializedValue, exp, flags: CommandFlags.FireAndForget);
+                await _writeDatabase.StringSetAsync(redisKey, serializedValue, exp, flags: CommandFlags.FireAndForget);
             }
             catch (Exception e)
             {
@@ -81,7 +83,7 @@ namespace RedisFlexCache.Provider
             try
             {
                 var redisKey = BuildKey(key);
-                var value = await _readDatabase.StringGetAsync(key);
+                var value = await _readDatabase.StringGetAsync(redisKey);
 
                 if (value.IsNull || !value.HasValue)
                 {
@@ -114,11 +116,11 @@ namespace RedisFlexCache.Provider
 
                 if (removeAt.HasValue)
                 {
-                    await _writeDatabase.KeyExpireAsync(key, removeAt);
+                    await _writeDatabase.KeyExpireAsync(redisKey, removeAt);
                 }
                 else
                 {
-                    await _writeDatabase.KeyDeleteAsync(key);
+                    await _writeDatabase.KeyDeleteAsync(redisKey);
                 }
             }
             catch (Exception ex)
@@ -131,7 +133,7 @@ namespace RedisFlexCache.Provider
         /// <inheritdoc/>
         public void Remove(string key, TimeSpan? removeAt = null)
         {
-            RemoveAsync(key).GetAwaiter().GetResult();
+            RemoveAsync(key, removeAt).GetAwaiter().GetResult();
         }
 
         /// <inheritdoc/>
