@@ -5,6 +5,7 @@ using RedisFlexCache.Configuration;
 using RedisFlexCache.Interfaces;
 using RedisFlexCache.Provider;
 using RedisFlexCache.Services;
+using StackExchange.Redis;
 
 namespace RedisFlexCache.Extensions
 {

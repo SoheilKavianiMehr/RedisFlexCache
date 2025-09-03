@@ -167,9 +167,11 @@ namespace RedisFlexCache.Provider
                 RedisResult redisResult = await _writeDatabase.ExecuteAsync("SCAN", nextCursor.ToString(), "MATCH", match, "COUNT", count);
                 var innerResult = (RedisResult[])redisResult;
 
-                nextCursor = int.Parse((string)innerResult[0]);
+                var cursorValue = (string?)innerResult[0];
+                nextCursor = cursorValue != null ? int.Parse(cursorValue) : 0;
 
-                List<string> resultLines = ((string[])innerResult[1]).ToList();
+                var keysArray = (string[]?)innerResult[1];
+                List<string> resultLines = keysArray?.ToList() ?? new List<string>();
                 schemas.AddRange(resultLines);
             }
             while (nextCursor != 0);

@@ -46,12 +46,12 @@ namespace RedisFlexCache.Configuration
         /// <summary>
         /// Gets or sets the username for Redis authentication.
         /// </summary>
-        public string Username { get; set; }
+        public string? Username { get; set; }
         
         /// <summary>
         /// Gets or sets the password for Redis authentication.
         /// </summary>
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether database caching is active.
