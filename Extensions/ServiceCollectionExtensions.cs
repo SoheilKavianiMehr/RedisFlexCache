@@ -175,7 +175,7 @@ namespace RedisFlexCache.Extensions
         private static IServiceCollection AddLocal(this IServiceCollection services)
         {
             services.AddSingleton<IDatabaseProvider, RedisDatabaseProvider>();
-            services.AddScoped<ICacheProvider, RedisCacheProvider>();
+            services.AddSingleton<ICacheProvider, RedisCacheProvider>();
             
             // Register IDatabase factory that provides separate read/write databases
             services.AddTransient<IDatabase>(provider => 
