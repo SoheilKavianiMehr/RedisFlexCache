@@ -9,7 +9,7 @@
     
     <!-- NuGet Package Metadata -->
     <PackageId>RedisFlexCache</PackageId>
-    <PackageVersion>1.0.0</PackageVersion>
+    <PackageVersion>1.0.1</PackageVersion>
     <Title>Redis Flexible Cache</Title>
     <Authors>Soheil Kaviani Mehr</Authors>
     <Company>SoheilKm</Company>
