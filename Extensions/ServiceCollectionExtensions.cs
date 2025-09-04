@@ -19,8 +19,9 @@ namespace RedisFlexCache.Extensions
         /// </summary>
         /// <param name="services">The service collection.</param>
         /// <param name="connectionString">The Redis connection string.</param>
+        /// <param name="lifetime">The service lifetime (default: Singleton).</param>
         /// <returns>The service collection for chaining.</returns>
-        public static IServiceCollection AddRedisFlexCache(this IServiceCollection services, string connectionString)
+        public static IServiceCollection AddRedisFlexCache(this IServiceCollection services, string connectionString, ServiceLifetime lifetime = ServiceLifetime.Singleton)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
                 throw new ArgumentException("Connection string cannot be null or empty.", nameof(connectionString));
@@ -28,7 +29,7 @@ namespace RedisFlexCache.Extensions
             return services.AddRedisFlexCache(options =>
             {
                 options.Connection = connectionString;
-            });
+            }, lifetime);
         }
 
         /// <summary>
@@ -36,8 +37,9 @@ namespace RedisFlexCache.Extensions
         /// </summary>
         /// <param name="services">The service collection.</param>
         /// <param name="configureOptions">An action to configure the Redis cache options.</param>
+        /// <param name="lifetime">The service lifetime (default: Singleton).</param>
         /// <returns>The service collection for chaining.</returns>
-        public static IServiceCollection AddRedisFlexCache(this IServiceCollection services, Action<RedisCacheOptions> configureOptions)
+        public static IServiceCollection AddRedisFlexCache(this IServiceCollection services, Action<RedisCacheOptions> configureOptions, ServiceLifetime lifetime = ServiceLifetime.Singleton)
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
@@ -45,8 +47,8 @@ namespace RedisFlexCache.Extensions
                 throw new ArgumentNullException(nameof(configureOptions));
 
             services.Configure(configureOptions);
-            services.AddLocal();
-            services.TryAddSingleton<ICacheService, RedisCacheService>();
+
+            services.RegisterLocal(lifetime);
 
             return services;
         }
@@ -57,8 +59,9 @@ namespace RedisFlexCache.Extensions
         /// <param name="services">The service collection.</param>
         /// <param name="configuration">The configuration instance.</param>
         /// <param name="sectionName">The configuration section name (default: "RedisCache").</param>
+        /// <param name="lifetime">The service lifetime (default: Singleton).</param>
         /// <returns>The service collection for chaining.</returns>
-        public static IServiceCollection AddRedisFlexCache(this IServiceCollection services, IConfiguration configuration, string sectionName = "RedisCache")
+        public static IServiceCollection AddRedisFlexCache(this IServiceCollection services, IConfiguration configuration, string sectionName = "RedisCache", ServiceLifetime lifetime = ServiceLifetime.Singleton)
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
@@ -71,11 +74,7 @@ namespace RedisFlexCache.Extensions
             if (!section.Exists())
                 throw new InvalidOperationException($"Configuration section '{sectionName}' not found.");
 
-            services.Configure<RedisCacheOptions>(section);
-            services.AddLocal();
-            services.TryAddSingleton<ICacheService, RedisCacheService>();
-
-            return services;
+            return services.AddRedisFlexCache(options => section.Bind(options), lifetime);
         }
 
         /// <summary>
@@ -84,8 +83,9 @@ namespace RedisFlexCache.Extensions
         /// <typeparam name="TImplementation">The custom cache service implementation type.</typeparam>
         /// <param name="services">The service collection.</param>
         /// <param name="configureOptions">An action to configure the Redis cache options.</param>
+        /// <param name="lifetime">The service lifetime (default: Singleton).</param>
         /// <returns>The service collection for chaining.</returns>
-        public static IServiceCollection AddRedisFlexCache<TImplementation>(this IServiceCollection services, Action<RedisCacheOptions> configureOptions)
+        public static IServiceCollection AddRedisFlexCache<TImplementation>(this IServiceCollection services, Action<RedisCacheOptions> configureOptions, ServiceLifetime lifetime = ServiceLifetime.Singleton)
             where TImplementation : class, ICacheService
         {
             if (services == null)
@@ -94,8 +94,8 @@ namespace RedisFlexCache.Extensions
                 throw new ArgumentNullException(nameof(configureOptions));
 
             services.Configure(configureOptions);
-            services.AddLocal();
-            services.TryAddSingleton<ICacheService, TImplementation>();
+
+            services.RegisterLocal(lifetime);
 
             return services;
         }
@@ -106,25 +106,21 @@ namespace RedisFlexCache.Extensions
         /// <param name="services">The service collection.</param>
         /// <param name="configureOptions">An action to configure the Redis cache options.</param>
         /// <param name="validateOnStart">Whether to validate the configuration on application start.</param>
+        /// <param name="lifetime">The service lifetime (default: Singleton).</param>
         /// <returns>The service collection for chaining.</returns>
-        public static IServiceCollection AddRedisFlexCacheWithValidation(this IServiceCollection services, Action<RedisCacheOptions> configureOptions, bool validateOnStart = true)
+        public static IServiceCollection AddRedisFlexCacheWithValidation(this IServiceCollection services, Action<RedisCacheOptions> configureOptions, bool validateOnStart = true, ServiceLifetime lifetime = ServiceLifetime.Singleton)
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
             if (configureOptions == null)
                 throw new ArgumentNullException(nameof(configureOptions));
 
-            services.Configure(configureOptions);
-            
             if (validateOnStart)
             {
                 services.PostConfigure<RedisCacheOptions>(options => options.Validate());
             }
             
-            services.AddLocal();
-            services.TryAddSingleton<ICacheService, RedisCacheService>();
-
-            return services;
+            return services.AddRedisFlexCache(configureOptions, lifetime);
         }
 
         /// <summary>
@@ -135,16 +131,7 @@ namespace RedisFlexCache.Extensions
         /// <returns>The service collection for chaining.</returns>
         public static IServiceCollection AddRedisFlexCacheScoped(this IServiceCollection services, Action<RedisCacheOptions> configureOptions)
         {
-            if (services == null)
-                throw new ArgumentNullException(nameof(services));
-            if (configureOptions == null)
-                throw new ArgumentNullException(nameof(configureOptions));
-
-            services.Configure(configureOptions);
-            services.AddLocal();
-            services.TryAddScoped<ICacheService, RedisCacheService>();
-
-            return services;
+            return services.AddRedisFlexCache(configureOptions, ServiceLifetime.Scoped);
         }
 
         /// <summary>
@@ -155,30 +142,87 @@ namespace RedisFlexCache.Extensions
         /// <returns>The service collection for chaining.</returns>
         public static IServiceCollection AddRedisFlexCacheTransient(this IServiceCollection services, Action<RedisCacheOptions> configureOptions)
         {
-            if (services == null)
-                throw new ArgumentNullException(nameof(services));
-            if (configureOptions == null)
-                throw new ArgumentNullException(nameof(configureOptions));
-
-            services.Configure(configureOptions);
-            services.AddLocal();
-            services.TryAddTransient<ICacheService, RedisCacheService>();
-
-            return services;
+            return services.AddRedisFlexCache(configureOptions, ServiceLifetime.Transient);
         }
 
         /// <summary>
-        /// Adds the local Redis cache dependencies to the service collection.
+        /// Registers Redis cache dependencies with the specified service lifetime.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <param name="lifetime">The service lifetime to use for registration.</param>
+        private static void RegisterLocal(this IServiceCollection services, ServiceLifetime lifetime)
+        {
+            switch (lifetime)
+            {
+                case ServiceLifetime.Singleton:
+                    services.AddLocalSingleton();
+                    services.TryAddSingleton<ICacheService, RedisCacheService>();
+                    break;
+                case ServiceLifetime.Scoped:
+                    services.AddLocalScoped();
+                    services.TryAddScoped<ICacheService, RedisCacheService>();
+                    break;
+                case ServiceLifetime.Transient:
+                    services.AddLocalTransient();
+                    services.TryAddTransient<ICacheService, RedisCacheService>();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, "Invalid service lifetime specified.");
+            }
+        }
+
+        /// <summary>
+        /// Adds the local Redis cache dependencies with Singleton lifetime to the service collection.
         /// </summary>
         /// <param name="services">The service collection.</param>
         /// <returns>The service collection for chaining.</returns>
-        private static IServiceCollection AddLocal(this IServiceCollection services)
+        private static IServiceCollection AddLocalSingleton(this IServiceCollection services)
         {
             services.AddSingleton<IDatabaseProvider, RedisDatabaseProvider>();
             services.AddSingleton<ICacheProvider, RedisCacheProvider>();
             
             // Register IDatabase factory that provides separate read/write databases
             services.AddTransient<IDatabase>(provider => 
+            {
+                var databaseProvider = provider.GetRequiredService<IDatabaseProvider>();
+                return databaseProvider.GetDatabase();
+            });
+
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the local Redis cache dependencies with transient lifetime to the service collection.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <returns>The service collection for chaining.</returns>
+        private static IServiceCollection AddLocalTransient(this IServiceCollection services)
+        {
+            services.AddTransient<IDatabaseProvider, RedisDatabaseProvider>();
+            services.AddTransient<ICacheProvider, RedisCacheProvider>();
+            
+            // Register IDatabase factory that provides separate read/write databases
+            services.AddTransient<IDatabase>(provider => 
+            {
+                var databaseProvider = provider.GetRequiredService<IDatabaseProvider>();
+                return databaseProvider.GetDatabase();
+            });
+
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the local Redis cache dependencies with scoped lifetime to the service collection.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <returns>The service collection for chaining.</returns>
+        private static IServiceCollection AddLocalScoped(this IServiceCollection services)
+        {
+            services.AddScoped<IDatabaseProvider, RedisDatabaseProvider>();
+            services.AddScoped<ICacheProvider, RedisCacheProvider>();
+            
+            // Register IDatabase factory that provides separate read/write databases
+            services.AddScoped<IDatabase>(provider => 
             {
                 var databaseProvider = provider.GetRequiredService<IDatabaseProvider>();
                 return databaseProvider.GetDatabase();

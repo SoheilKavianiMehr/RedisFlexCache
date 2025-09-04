@@ -198,15 +198,48 @@ builder.Services.AddRedisFlexCache<CustomCacheService>(options =>
 ```csharp
 // Singleton (default - recommended for most scenarios)
 builder.Services.AddRedisFlexCache(options => { /* config */ });
+builder.Services.AddRedisFlexCache(options => { /* config */ }, ServiceLifetime.Singleton);
 
 // Scoped (per request in web applications)
-builder.Services.AddRedisFlexCacheScoped(options => { /* config */ });
+builder.Services.AddRedisFlexCache(options => { /* config */ }, ServiceLifetime.Scoped);
 
 // Transient (new instance every time)
-builder.Services.AddRedisFlexCacheTransient(options => { /* config */ });
+builder.Services.AddRedisFlexCache(options => { /* config */ }, ServiceLifetime.Transient);
 
-// With validation
-builder.Services.AddRedisFlexCacheWithValidation(options => { /* config */ }, validateOnStart: true);
+// With validation and custom lifetime
+builder.Services.AddRedisFlexCacheWithValidation(options => { /* config */ }, validateOnStart: true, ServiceLifetime.Singleton);
+
+// Legacy methods (still supported for backward compatibility)
+builder.Services.AddRedisFlexCacheScoped(options => { /* config */ });
+builder.Services.AddRedisFlexCacheTransient(options => { /* config */ });
+```
+
+### Choosing the Right Service Lifetime
+
+**Singleton (Recommended)** 🏆
+- ✅ Best performance - single shared instance
+- ✅ Thread-safe Redis connections
+- ✅ Optimal memory usage
+- ✅ Recommended for most scenarios
+
+**Scoped**
+- ⚠️ New instance per HTTP request/scope
+- ⚠️ Higher memory usage
+- ⚠️ Use only if you need request-specific cache behavior
+
+**Transient**
+- ❌ New instance every time (not recommended)
+- ❌ Poor performance and memory usage
+- ❌ Potential connection exhaustion
+- ❌ Avoid unless absolutely necessary
+
+```csharp
+// Recommended approach
+builder.Services.AddRedisFlexCache(options => 
+{
+    options.Connection = "localhost:6379";
+    options.KeyPrefix = "myapp";
+}); // Defaults to Singleton
 ```
 
 ## Configuration Options

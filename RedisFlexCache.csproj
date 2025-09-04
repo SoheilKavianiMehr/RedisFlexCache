@@ -9,7 +9,7 @@
     
     <!-- NuGet Package Metadata -->
     <PackageId>RedisFlexCache</PackageId>
-    <PackageVersion>1.0.1</PackageVersion>
+    <PackageVersion>1.0.4</PackageVersion>
     <Title>Redis Flexible Cache</Title>
     <Authors>Soheil Kaviani Mehr</Authors>
     <Company>SoheilKm</Company>
@@ -20,7 +20,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>Initial release with core Redis caching functionality, dependency injection support, and configuration patterns.</PackageReleaseNotes>
+    <PackageReleaseNotes>v1.0.4: Added unified service registration with ServiceLifetime parameter support. All AddRedisFlexCache methods now accept an optional ServiceLifetime parameter (Singleton, Scoped, Transient) for flexible dependency injection. Legacy specific lifetime methods remain for backward compatibility. Improved service registration consistency and reduced code duplication.</PackageReleaseNotes>
     <Copyright>Copyright © 2025</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
