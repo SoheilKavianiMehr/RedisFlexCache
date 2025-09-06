@@ -124,6 +124,231 @@ builder.Services.AddRedisFlexCache(options =>
 });
 ```
 
+## Redis Cluster Support
+
+RedisFlexCache provides built-in support for Redis clusters with automatic failover and load balancing. You can configure cluster connections using semicolon-separated connection strings.
+
+### Cluster Configuration
+
+#### Using Connection String Format
+
+```csharp
+// Multiple Redis nodes with semicolon separation
+builder.Services.AddRedisFlexCache("127.0.0.1:6379;192.168.1.100:6379;192.168.1.101:6379");
+```
+
+#### Using appsettings.json
+
+```json
+{
+  "RedisCache": {
+    "Connection": "127.0.0.1:6379;192.168.1.100:6379;192.168.1.101:6379",
+    "KeyPrefix": "myapp",
+    "DefaultExpiration": "00:30:00",
+    "EnableCompression": true,
+    "ConnectionTimeout": 5000,
+    "CommandTimeout": 5000
+  }
+}
+```
+
+#### Programmatic Configuration
+
+```csharp
+builder.Services.AddRedisFlexCache(options =>
+{
+    options.Connection = "127.0.0.1:6379;192.168.1.100:6379;192.168.1.101:6379";
+    options.KeyPrefix = "myapp";
+    options.DefaultExpiration = TimeSpan.FromMinutes(30);
+    options.EnableCompression = true;
+    options.ConnectionTimeout = 10000; // Increase timeout for cluster
+    options.CommandTimeout = 10000;
+});
+```
+
+### Cluster Connection String Format
+
+The cluster connection string uses semicolon (`;`) as the delimiter between Redis nodes:
+
+```
+host1:port1;host2:port2;host3:port3;...
+```
+
+**Examples:**
+
+```csharp
+// Local cluster setup
+"127.0.0.1:6379;127.0.0.1:6380;127.0.0.1:6381"
+
+// Production cluster with different servers
+"redis-node1.company.com:6379;redis-node2.company.com:6379;redis-node3.company.com:6379"
+
+// Mixed IP and hostname configuration
+"192.168.1.10:6379;redis-backup.local:6379;10.0.0.50:6379"
+
+// Cluster with authentication
+"user:password@redis1.example.com:6379;user:password@redis2.example.com:6379"
+```
+
+### Cluster Features
+
+#### Automatic Failover
+- **Node Detection**: Automatically detects and connects to available cluster nodes
+- **Health Monitoring**: Continuously monitors node health and availability
+- **Seamless Failover**: Automatically switches to healthy nodes when failures occur
+- **Recovery**: Automatically reconnects to recovered nodes
+
+#### Load Balancing
+- **Distributed Operations**: Distributes cache operations across cluster nodes
+- **Optimal Routing**: Routes commands to the appropriate node based on key hashing
+- **Connection Pooling**: Maintains efficient connection pools to all cluster nodes
+
+#### Cluster Topology
+- **Dynamic Discovery**: Automatically discovers cluster topology and slot assignments
+- **Slot Mapping**: Handles Redis cluster slot mapping transparently
+- **Resharding Support**: Adapts to cluster resharding operations
+
+### Best Practices for Cluster Configuration
+
+#### 1. Connection Timeouts
+```csharp
+builder.Services.AddRedisFlexCache(options =>
+{
+    options.Connection = "node1:6379;node2:6379;node3:6379";
+    options.ConnectionTimeout = 10000; // Increase for cluster latency
+    options.CommandTimeout = 10000;    // Increase for cluster operations
+});
+```
+
+#### 2. Minimum Node Configuration
+```csharp
+// Recommended: At least 3 nodes for proper cluster operation
+var clusterNodes = "redis-master1:6379;redis-master2:6379;redis-master3:6379";
+builder.Services.AddRedisFlexCache(clusterNodes);
+```
+
+#### 3. High Availability Setup
+```csharp
+// Include both master and replica nodes for maximum availability
+var haCluster = "master1:6379;master2:6379;master3:6379;replica1:6379;replica2:6379;replica3:6379";
+builder.Services.AddRedisFlexCache(haCluster);
+```
+
+#### 4. Network Considerations
+```csharp
+builder.Services.AddRedisFlexCache(options =>
+{
+    options.Connection = "10.0.1.10:6379;10.0.1.11:6379;10.0.1.12:6379";
+    options.ConnectionTimeout = 15000; // Account for network latency
+    options.CommandTimeout = 15000;
+    options.ConnectionCount = 2;       // Multiple connections per node
+});
+```
+
+### Cluster Monitoring and Diagnostics
+
+#### Connection Status
+```csharp
+public class CacheHealthService
+{
+    private readonly ICacheProvider _cacheProvider;
+    private readonly ILogger<CacheHealthService> _logger;
+
+    public async Task<bool> CheckClusterHealthAsync()
+    {
+        try
+        {
+            // Test cluster connectivity
+            var testKey = "health-check-" + Guid.NewGuid();
+            await _cacheProvider.SetAsync(testKey, "test", TimeSpan.FromSeconds(10));
+            var result = await _cacheProvider.GetAsync<string>(testKey);
+            await _cacheProvider.RemoveAsync(testKey);
+            
+            return result == "test";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Cluster health check failed");
+            return false;
+        }
+    }
+}
+```
+
+#### Logging Cluster Events
+```csharp
+// Enable detailed logging for cluster operations
+builder.Logging.AddConsole();
+builder.Logging.SetMinimumLevel(LogLevel.Information);
+
+// RedisFlexCache will log:
+// - Cluster node connections/disconnections
+// - Failover events
+// - Slot mapping changes
+// - Performance metrics
+```
+
+### Cluster vs Single Node Comparison
+
+| Feature | Single Node | Redis Cluster |
+|---------|-------------|---------------|
+| **Setup Complexity** | Simple | Moderate |
+| **High Availability** | ❌ Single point of failure | ✅ Automatic failover |
+| **Scalability** | ❌ Limited by single server | ✅ Horizontal scaling |
+| **Performance** | ✅ Lower latency | ⚠️ Network overhead |
+| **Data Distribution** | ❌ All data on one node | ✅ Distributed across nodes |
+| **Maintenance** | ⚠️ Downtime required | ✅ Rolling updates possible |
+| **Cost** | ✅ Lower infrastructure cost | ⚠️ Higher infrastructure cost |
+
+### Migration from Single Node to Cluster
+
+```csharp
+// Before: Single node
+builder.Services.AddRedisFlexCache("localhost:6379");
+
+// After: Cluster configuration
+builder.Services.AddRedisFlexCache("redis-node1:6379;redis-node2:6379;redis-node3:6379");
+
+// No code changes required in your application!
+// RedisFlexCache handles cluster operations transparently
+```
+
+**Migration Steps:**
+1. Set up Redis cluster infrastructure
+2. Update connection string to include all cluster nodes
+3. Test cluster connectivity
+4. Deploy application with new configuration
+5. Monitor cluster performance and health
+
+### Troubleshooting Cluster Issues
+
+#### Common Issues and Solutions
+
+**Connection Timeouts**
+```csharp
+// Increase timeouts for cluster latency
+options.ConnectionTimeout = 15000;
+options.CommandTimeout = 15000;
+```
+
+**Node Discovery Problems**
+```csharp
+// Ensure all cluster nodes are listed
+options.Connection = "node1:6379;node2:6379;node3:6379;node4:6379;node5:6379;node6:6379";
+```
+
+**Network Connectivity**
+```csharp
+// Use IP addresses if DNS resolution is problematic
+options.Connection = "192.168.1.10:6379;192.168.1.11:6379;192.168.1.12:6379";
+```
+
+**Slot Migration Errors**
+```csharp
+// Enable retry logic for slot migration scenarios
+options.CommandTimeout = 20000; // Allow time for slot migrations
+```
+
 ## Advanced Usage
 
 ### Key Operations
