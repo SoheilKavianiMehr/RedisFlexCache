@@ -185,7 +185,8 @@ namespace RedisFlexCache.Provider
         {
             try
             {
-                return await _readDatabase.SortedSetLengthAsync(key, min, max, exclude, flags);
+                var redisKey = BuildKey(key!);
+                return await _readDatabase.SortedSetLengthAsync(redisKey, min, max, exclude, flags);
             }
             catch (Exception e)
             {
@@ -199,7 +200,8 @@ namespace RedisFlexCache.Provider
         {
             try
             {
-                return await _writeDatabase.SortedSetAddAsync(key, member, score, flags);
+                var redisKey = BuildKey(key!);
+                return await _writeDatabase.SortedSetAddAsync(redisKey, member, score, flags);
             }
             catch (Exception e)
             {
@@ -213,7 +215,8 @@ namespace RedisFlexCache.Provider
         {
             try
             {
-                return await _writeDatabase.KeyExpireAsync(key, expiry, flags);
+                var redisKey = BuildKey(key!);
+                return await _writeDatabase.KeyExpireAsync(redisKey, expiry, flags);
             }
             catch (Exception e)
             {
